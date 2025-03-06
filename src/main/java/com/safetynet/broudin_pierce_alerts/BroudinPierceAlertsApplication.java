@@ -9,5 +9,4 @@ public class BroudinPierceAlertsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BroudinPierceAlertsApplication.class, args);
 	}
-
 }
