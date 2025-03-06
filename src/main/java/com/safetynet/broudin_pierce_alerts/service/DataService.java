@@ -28,7 +28,7 @@ public class DataService {
             Map<String, List<?>> data = objectMapper.readValue(inputStream, Map.class);
             this.people = objectMapper.convertValue(data.get("persons"),objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
             this.fireStations = objectMapper.convertValue(data.get("firestations"), objectMapper.getTypeFactory().constructCollectionType(List.class, FireStation.class));
-            this.medicalRecords = objectMapper.convertValue(data.get("medicalRecords"), objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class));
+            this.medicalRecords = objectMapper.convertValue(data.get("medicalrecords"), objectMapper.getTypeFactory().constructCollectionType(List.class, MedicalRecord.class));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

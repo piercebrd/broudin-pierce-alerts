@@ -1,5 +1,6 @@
 package com.safetynet.broudin_pierce_alerts.controller;
 
+import com.safetynet.broudin_pierce_alerts.dto.FireStationResponseDTO;
 import com.safetynet.broudin_pierce_alerts.dto.PersonDTO;
 import com.safetynet.broudin_pierce_alerts.service.FireStationService;
 import org.slf4j.Logger;
@@ -24,9 +25,9 @@ public class FireStationController {
     }
 
     @GetMapping
-    public List<PersonDTO> getPersonsByStation(@RequestParam String stationNumber) {
+    public FireStationResponseDTO getPeopleByStation(@RequestParam String stationNumber) {
         logger.info("Fetching persons for fire station: {}", stationNumber);
-        return fireStationService.getPersonsByStation(stationNumber);
+        return fireStationService.getPeopleByStation(stationNumber);
     }
 
 
