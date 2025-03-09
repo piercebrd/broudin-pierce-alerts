@@ -26,7 +26,7 @@ public class FireStationController {
 
     @GetMapping
     public FireStationResponseDTO getPeopleByStation(@RequestParam String stationNumber) {
-        logger.info("Fetching persons for fire station: {}", stationNumber);
+        logger.info("Fetching people for fire station: {}", stationNumber);
         return fireStationService.getPeopleByStation(stationNumber);
     }
 

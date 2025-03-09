@@ -12,15 +12,18 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class FireStationService {
 
     private final DataService dataService;
+    private final MedicalRecordService medicalRecordService;
 
-    public FireStationService(DataService dataService) {
+    public FireStationService(DataService dataService, MedicalRecordService medicalRecordService) {
         this.dataService = dataService;
+        this.medicalRecordService = medicalRecordService;
     }
 
     public FireStationResponseDTO getPeopleByStation(String stationNumber) {
@@ -41,14 +44,10 @@ public class FireStationService {
         int childCount = 0;
 
         for (Person person : peopleCovered) {
-            MedicalRecord medicalRecord = dataService.getMedicalRecords().stream()
-                    .filter(record -> record.getFirstName().equals(person.getFirstName()) &&
-                            record.getLastName().equals(person.getLastName()))
-                    .findFirst()
-                    .orElse(null);
+            Optional<MedicalRecord> medicalRecord = medicalRecordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
 
-            if (medicalRecord != null) {
-                int age = calculateAge(medicalRecord.getBirthdate());
+            if (medicalRecord.isPresent()) {
+                int age = medicalRecordService.calculateAge(medicalRecord.get().getBirthdate());
                 if (age > 18) {
                     adultCount++;
                 } else {
@@ -56,18 +55,6 @@ public class FireStationService {
                 }
             }
         }
-
         return new FireStationResponseDTO(personDTOList, adultCount, childCount);
-    }
-
-    private int calculateAge(String birthdate) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDate birthDate = LocalDate.parse(birthdate, formatter);
-            return Period.between(birthDate, LocalDate.now()).getYears();
-        } catch (DateTimeParseException e) {
-            System.err.println("Error parsing birthdate: " + birthdate + " - " + e.getMessage());
-            return 18; 
-        }
     }
 }
