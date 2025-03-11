@@ -7,6 +7,7 @@ import com.safetynet.broudin_pierce_alerts.model.Person;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -34,6 +35,19 @@ public class DataService {
         }
     }
 
+    public void saveData() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Map<String, Object> data = Map.of(
+                    "persons", people,
+                    "firestations", fireStations,
+                    "medicalrecords", medicalRecords
+            );
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File("src/main/resources/data.json"), data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public List<Person> getPeople() {
         return people;
     }
