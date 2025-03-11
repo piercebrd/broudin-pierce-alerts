@@ -35,4 +35,50 @@ public class MedicalRecordService {
             return 18;
         }
     }
+
+    public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
+        dataService.getMedicalRecords().add(medicalRecord);
+        dataService.saveData();
+        return medicalRecord;
+    }
+
+    public MedicalRecord updateMedicalRecord(String firstName, String lastName, MedicalRecord updatedRecord) {
+        final String trimmedFirstName = firstName.trim();
+        final String trimmedLastName = lastName.trim();
+
+        for (int i = 0; i < dataService.getMedicalRecords().size(); i++) {
+            MedicalRecord existingRecord = dataService.getMedicalRecords().get(i);
+            if (existingRecord.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
+                    existingRecord.getLastName().trim().equalsIgnoreCase(trimmedLastName)) {
+
+                updatedRecord.setFirstName(trimmedFirstName);
+                updatedRecord.setLastName(trimmedLastName);
+                dataService.getMedicalRecords().set(i, updatedRecord);
+                dataService.saveData();
+                System.out.println("Updated medical record for: " + trimmedFirstName + " " + trimmedLastName);
+                return updatedRecord;
+            }
+        }
+
+        System.out.println("Medical record not found: " + trimmedFirstName + " " + trimmedLastName);
+        return null;
+    }
+
+    public boolean deleteMedicalRecord(String firstName, String lastName) {
+        final String trimmedFirstName = firstName.trim();
+        final String trimmedLastName = lastName.trim();
+
+        boolean removed = dataService.getMedicalRecords().removeIf(record ->
+                record.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
+                        record.getLastName().trim().equalsIgnoreCase(trimmedLastName));
+
+        if (removed) {
+            dataService.saveData();
+            System.out.println("Deleted medical record for: " + trimmedFirstName + " " + trimmedLastName);
+        } else {
+            System.out.println("Medical record not found: " + trimmedFirstName + " " + trimmedLastName);
+        }
+
+        return removed;
+    }
 }
