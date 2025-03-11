@@ -26,6 +26,50 @@ public class FireStationService {
         this.medicalRecordService = medicalRecordService;
     }
 
+    public FireStation addFireStation(FireStation fireStation) {
+        fireStation.setStation(fireStation.getStation().trim());
+        dataService.getFireStations().add(fireStation);
+        dataService.saveData();
+        return fireStation;
+    }
+
+    public FireStation updateFireStation(String address, String newStationNumber) {
+        final String trimmedAddress = address.trim();
+        final String trimmedStation = newStationNumber.trim(); // Trim \n
+
+        Optional<FireStation> fireStationOpt = dataService.getFireStations().stream()
+                .filter(fs -> fs.getAddress().equalsIgnoreCase(trimmedAddress))
+                .findFirst();
+
+        if (fireStationOpt.isPresent()) {
+            FireStation fireStation = fireStationOpt.get();
+            fireStation.setStation(trimmedStation); // Save without \n
+            dataService.saveData();
+            System.out.println("Updated fire station: " + trimmedAddress + " -> " + trimmedStation);
+            return fireStation;
+        }
+
+        System.out.println("Address not found: " + trimmedAddress);
+        return null;
+    }
+
+
+    public boolean deleteFireStation(String address) {
+        final String normalizedAddress = address.trim().toLowerCase();
+
+        boolean removed = dataService.getFireStations().removeIf(fs ->
+                fs.getAddress().trim().toLowerCase().equals(normalizedAddress));
+
+        if (removed) {
+            dataService.saveData();
+            System.out.println("Fire station mapping deleted successfully.");
+        } else {
+            System.out.println("Address not found! Possible mismatch in data.");
+        }
+
+        return removed;
+    }
+
     public FireStationResponseDTO getPeopleByStation(String stationNumber) {
         List<String> coveredAddresses = dataService.getFireStations().stream()
                 .filter(fs -> fs.getStation().equals(stationNumber))

@@ -20,4 +20,7 @@ public class FireStation {
         return station;
     }
 
+    public void setStation(String newStationNumber) {
+        this.station = newStationNumber;
+    }
 }

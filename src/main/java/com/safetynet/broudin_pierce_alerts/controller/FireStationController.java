@@ -2,13 +2,13 @@ package com.safetynet.broudin_pierce_alerts.controller;
 
 import com.safetynet.broudin_pierce_alerts.dto.FireStationResponseDTO;
 import com.safetynet.broudin_pierce_alerts.dto.PersonDTO;
+import com.safetynet.broudin_pierce_alerts.model.FireStation;
 import com.safetynet.broudin_pierce_alerts.service.FireStationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +22,30 @@ public class FireStationController {
 
     private FireStationController(FireStationService fireStationService) {
         this.fireStationService = fireStationService;
+    }
+    @PostMapping
+    public ResponseEntity<FireStation> addFireStation(@RequestBody FireStation firestation) {
+        logger.info("Adding FireStation: {}", firestation);
+        FireStation created = fireStationService.addFireStation(firestation);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateFireStation(
+            @RequestParam String address,
+            @RequestParam String stationNumber) {
+        FireStation updated = fireStationService.updateFireStation(address, stationNumber);
+        return updated != null
+                ? ResponseEntity.ok(updated)
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address not found");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteFireStation(@RequestParam String address) {
+        boolean deleted = fireStationService.deleteFireStation(address);
+        return deleted
+                ? ResponseEntity.ok("Deleted FireStation")
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address not found");
     }
 
     @GetMapping
