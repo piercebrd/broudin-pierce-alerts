@@ -1,27 +1,33 @@
 package com.safetynet.broudin_pierce_alerts.service;
 
 import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
+import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class MedicalRecordService {
 
-    private final DataService dataService;
+    private final DataRepository dataRepository;
 
-    public MedicalRecordService(DataService dataService) {
-        this.dataService = dataService;
+    public MedicalRecordService(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
     }
 
     public Optional<MedicalRecord> getMedicalRecordForPerson(String firstName, String lastName) {
-        return dataService.getMedicalRecords().stream()
-                .filter(record -> record.getFirstName().equals(firstName) &&
-                        record.getLastName().equals(lastName))
+
+
+        List<MedicalRecord> records = dataRepository.getMedicalRecords();
+
+        return records.stream()
+                .filter(record -> record.getFirstName().trim().equalsIgnoreCase(firstName.trim()) &&
+                        record.getLastName().trim().equalsIgnoreCase(lastName.trim()))
                 .findFirst();
     }
 
@@ -37,8 +43,8 @@ public class MedicalRecordService {
     }
 
     public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
-        dataService.getMedicalRecords().add(medicalRecord);
-        dataService.saveData();
+        dataRepository.getMedicalRecords().add(medicalRecord);
+        dataRepository.saveData();
         return medicalRecord;
     }
 
@@ -46,15 +52,15 @@ public class MedicalRecordService {
         final String trimmedFirstName = firstName.trim();
         final String trimmedLastName = lastName.trim();
 
-        for (int i = 0; i < dataService.getMedicalRecords().size(); i++) {
-            MedicalRecord existingRecord = dataService.getMedicalRecords().get(i);
+        for (int i = 0; i < dataRepository.getMedicalRecords().size(); i++) {
+            MedicalRecord existingRecord = dataRepository.getMedicalRecords().get(i);
             if (existingRecord.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
                     existingRecord.getLastName().trim().equalsIgnoreCase(trimmedLastName)) {
 
                 updatedRecord.setFirstName(trimmedFirstName);
                 updatedRecord.setLastName(trimmedLastName);
-                dataService.getMedicalRecords().set(i, updatedRecord);
-                dataService.saveData();
+                dataRepository.getMedicalRecords().set(i, updatedRecord);
+                dataRepository.saveData();
                 System.out.println("Updated medical record for: " + trimmedFirstName + " " + trimmedLastName);
                 return updatedRecord;
             }
@@ -68,12 +74,12 @@ public class MedicalRecordService {
         final String trimmedFirstName = firstName.trim();
         final String trimmedLastName = lastName.trim();
 
-        boolean removed = dataService.getMedicalRecords().removeIf(record ->
+        boolean removed = dataRepository.getMedicalRecords().removeIf(record ->
                 record.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
                         record.getLastName().trim().equalsIgnoreCase(trimmedLastName));
 
         if (removed) {
-            dataService.saveData();
+            dataRepository.saveData();
             System.out.println("Deleted medical record for: " + trimmedFirstName + " " + trimmedLastName);
         } else {
             System.out.println("Medical record not found: " + trimmedFirstName + " " + trimmedLastName);

@@ -1,6 +1,7 @@
 package com.safetynet.broudin_pierce_alerts.service;
 
 import com.safetynet.broudin_pierce_alerts.model.Person;
+import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,22 +9,22 @@ import java.util.List;
 @Service
 public class PersonService {
 
-    private final DataService dataService;
+    private final DataRepository dataRepository;
 
-    public PersonService(DataService dataService) {
-        this.dataService = dataService;
+    public PersonService(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
     }
 
     public Person addPerson(Person person) {
-        dataService.getPeople().add(person);
-        dataService.saveData();
+        dataRepository.getPeople().add(person);
+        dataRepository.saveData();
         return person;
     }
 
     public Person updatePerson(String firstName, String lastName, Person updatedPerson) {
         final String trimmedFirstName = firstName.trim();
         final String trimmedLastName = lastName.trim();
-        List<Person> people = dataService.getPeople();
+        List<Person> people = dataRepository.getPeople();
 
         for (int i = 0; i < people.size(); i++) {
             Person existingPerson = people.get(i);
@@ -33,7 +34,7 @@ public class PersonService {
                 updatedPerson.setFirstName(trimmedFirstName);
                 updatedPerson.setLastName(trimmedLastName);
                 people.set(i, updatedPerson);
-                dataService.saveData();
+                dataRepository.saveData();
 
                 System.out.println("Person updated successfully: " + updatedPerson);
                 return updatedPerson;
@@ -50,7 +51,7 @@ public class PersonService {
         final String trimmedLastName = lastName.trim();
 
 
-        long beforeCount = dataService.getPeople().stream()
+        long beforeCount = dataRepository.getPeople().stream()
                 .filter(person -> person.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
                         person.getLastName().trim().equalsIgnoreCase(trimmedLastName))
                 .count();
@@ -58,12 +59,12 @@ public class PersonService {
         System.out.println("Before deletion, found " + beforeCount + " matching persons.");
 
 
-        boolean removed = dataService.getPeople().removeIf(person ->
+        boolean removed = dataRepository.getPeople().removeIf(person ->
                 person.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
                         person.getLastName().trim().equalsIgnoreCase(trimmedLastName));
 
 
-        long afterCount = dataService.getPeople().stream()
+        long afterCount = dataRepository.getPeople().stream()
                 .filter(person -> person.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
                         person.getLastName().trim().equalsIgnoreCase(trimmedLastName))
                 .count();
@@ -71,7 +72,7 @@ public class PersonService {
         System.out.println("After deletion, remaining persons: " + afterCount);
 
         if (removed) {
-            dataService.saveData();
+            dataRepository.saveData();
             System.out.println("Person(s) deleted successfully!");
         } else {
             System.out.println("No persons deleted, possibly an issue.");

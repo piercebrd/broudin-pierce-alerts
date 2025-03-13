@@ -4,6 +4,7 @@ import com.safetynet.broudin_pierce_alerts.dto.ResidentDTO;
 import com.safetynet.broudin_pierce_alerts.model.FireStation;
 import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
 import com.safetynet.broudin_pierce_alerts.model.Person;
+import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,22 +13,22 @@ import java.util.stream.Collectors;
 @Service
 public class FloodService {
 
-    private final DataService dataService;
+    private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
 
-    public FloodService(DataService dataService, MedicalRecordService medicalRecordService) {
-        this.dataService = dataService;
+    public FloodService(DataRepository dataRepository, MedicalRecordService medicalRecordService) {
+        this.dataRepository = dataRepository;
         this.medicalRecordService = medicalRecordService;
     }
 
     public Map<String, List<ResidentDTO>> getFloodInfoByStations(List<String> stationNumbers) {
 
-        Set<String> coveredAddresses = dataService.getFireStations().stream()
+        Set<String> coveredAddresses = dataRepository.getFireStations().stream()
                 .filter(fs -> stationNumbers.contains(fs.getStation()))
                 .map(FireStation::getAddress)
                 .collect(Collectors.toSet());
 
-        return dataService.getPeople().stream()
+        return dataRepository.getPeople().stream()
                 .filter(person -> coveredAddresses.contains(person.getAddress()))
                 .collect(Collectors.groupingBy(Person::getAddress,
                         Collectors.mapping(person ->  {

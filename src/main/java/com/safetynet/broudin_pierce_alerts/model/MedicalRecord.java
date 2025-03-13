@@ -2,6 +2,7 @@ package com.safetynet.broudin_pierce_alerts.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MedicalRecord {
     private String firstName;
@@ -47,4 +48,5 @@ public class MedicalRecord {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
 }

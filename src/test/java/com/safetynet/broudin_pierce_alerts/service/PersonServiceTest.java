@@ -1,6 +1,7 @@
 package com.safetynet.broudin_pierce_alerts.service;
 
 import com.safetynet.broudin_pierce_alerts.model.Person;
+import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +21,7 @@ public class PersonServiceTest {
     private PersonService personService;
 
     @Mock
-    private DataService dataService;
+    private DataRepository dataRepository;
 
     private List<Person> people;
 
@@ -29,7 +30,7 @@ public class PersonServiceTest {
         MockitoAnnotations.openMocks(this);
         people = new ArrayList<>();
         people.add(new Person("John","Doe","john@example.com","City","1262","5555-555", "123 Street" ));
-        when(dataService.getPeople()).thenReturn(people);
+        when(dataRepository.getPeople()).thenReturn(people);
     }
 
     @Test
@@ -40,7 +41,7 @@ public class PersonServiceTest {
 
         assertNotNull(addedPerson);
         assertEquals("Jane", addedPerson.getFirstName());
-        Mockito.verify(dataService, times(1)).getPeople();
+        Mockito.verify(dataRepository, times(1)).getPeople();
 
     }
 
@@ -60,6 +61,6 @@ public class PersonServiceTest {
         boolean result = personService.deletePerson("John", "Doe");
 
         assertTrue(result);
-        Mockito.verify(dataService, atLeastOnce()).getPeople();
+        Mockito.verify(dataRepository, atLeastOnce()).getPeople();
     }
 }

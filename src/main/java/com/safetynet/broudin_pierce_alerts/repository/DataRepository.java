@@ -1,4 +1,4 @@
-package com.safetynet.broudin_pierce_alerts.service;
+package com.safetynet.broudin_pierce_alerts.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.broudin_pierce_alerts.model.FireStation;
@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class DataService {
+public class DataRepository {
     private List<Person> people;
     private List<FireStation> fireStations;
     private List<MedicalRecord> medicalRecords;
 
-    public DataService() {
+    public DataRepository() {
         loadData();
     }
 

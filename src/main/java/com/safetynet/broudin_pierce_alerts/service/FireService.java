@@ -1,10 +1,10 @@
 package com.safetynet.broudin_pierce_alerts.service;
 
 import com.safetynet.broudin_pierce_alerts.dto.FireResponseDTO;
-import com.safetynet.broudin_pierce_alerts.dto.FireStationResponseDTO;
 import com.safetynet.broudin_pierce_alerts.dto.ResidentDTO;
 import com.safetynet.broudin_pierce_alerts.model.FireStation;
 import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
+import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 @Service
 public class FireService {
 
-    private final DataService dataservice;
+    private final DataRepository dataservice;
     private final MedicalRecordService recordService;
 
-    public FireService(DataService dataservice, MedicalRecordService recordService) {
+    public FireService(DataRepository dataservice, MedicalRecordService recordService) {
         this.dataservice = dataservice;
         this.recordService = recordService;
     }

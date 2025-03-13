@@ -365,10 +365,10 @@
   }, {
     "firstName" : "John",
     "lastName" : "Doe",
-    "email" : "johndoe@yee.com",
-    "city" : "New York",
-    "zip" : "67890",
-    "phone" : "999-999-9999",
-    "address" : "456 New St"
+    "email" : "john@doe.com",
+    "city" : "City",
+    "zip" : "12345",
+    "phone" : "555-5555",
+    "address" : "123 Street"
   } ]
 }

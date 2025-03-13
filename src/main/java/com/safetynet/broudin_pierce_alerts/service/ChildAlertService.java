@@ -1,10 +1,9 @@
 package com.safetynet.broudin_pierce_alerts.service;
 
 import com.safetynet.broudin_pierce_alerts.dto.ChildAlertResponseDTO;
-import com.safetynet.broudin_pierce_alerts.dto.FireStationResponseDTO;
 import com.safetynet.broudin_pierce_alerts.dto.PersonDTO;
-import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
 import com.safetynet.broudin_pierce_alerts.model.Person;
+import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,16 +14,16 @@ import java.util.stream.Collectors;
 @Service
 public class ChildAlertService {
 
-    private final DataService dataService;
+    private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
 
-    public ChildAlertService(DataService dataService, MedicalRecordService medicalRecordService) {
-        this.dataService = dataService;
+    public ChildAlertService(DataRepository dataRepository, MedicalRecordService medicalRecordService) {
+        this.dataRepository = dataRepository;
         this.medicalRecordService = medicalRecordService;
     }
 
     public List<ChildAlertResponseDTO> getChildrenAddress(String address) {
-        List<Person> residents = dataService.getPeople().stream()
+        List<Person> residents = dataRepository.getPeople().stream()
                 .filter(person -> person.getAddress().equals(address))
                 .collect(Collectors.toList());
 

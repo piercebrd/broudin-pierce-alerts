@@ -1,4 +1,4 @@
-package com.safetynet.broudin_pierce_alerts.config;
+/*package com.safetynet.broudin_pierce_alerts.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,3 +22,4 @@ public class SecurityConfig {
     }
 }
 
+*/
