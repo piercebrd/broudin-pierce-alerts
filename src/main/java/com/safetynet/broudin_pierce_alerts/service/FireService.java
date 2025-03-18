@@ -17,10 +17,12 @@ public class FireService {
 
     private final DataRepository dataservice;
     private final MedicalRecordService recordService;
+    private final DataRepository dataRepository;
 
-    public FireService(DataRepository dataservice, MedicalRecordService recordService) {
+    public FireService(DataRepository dataservice, MedicalRecordService recordService, DataRepository dataRepository) {
         this.dataservice = dataservice;
         this.recordService = recordService;
+        this.dataRepository = dataRepository;
     }
 
     public FireResponseDTO getInfoByAddress(String address) {
@@ -42,6 +44,8 @@ public class FireService {
                     return new ResidentDTO(person.getFirstName(), person.getLastName(), person.getPhone(), age, medications, allergies);
                 })
                 .collect(Collectors.toList());
+
         return new FireResponseDTO(fireStationNumber, residents);
+
     }
 }

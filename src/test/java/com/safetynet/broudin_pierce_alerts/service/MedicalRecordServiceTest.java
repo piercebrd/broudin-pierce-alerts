@@ -65,4 +65,46 @@ public class MedicalRecordServiceTest {
 
         assertEquals(18, age);
     }
+
+    @Test
+    void addMedicalRecord_ShouldAddRecord() {
+        MedicalRecord newRecord = new MedicalRecord("Alice", "Smith", "02/15/1995", List.of("Ibuprofen"), List.of("None"));
+
+        medicalRecordService.addMedicalRecord(newRecord);
+
+        verify(dataRepository, times(1)).getMedicalRecords();
+        assertTrue(medicalRecords.contains(newRecord));
+    }
+
+    @Test
+    void updateMedicalRecord_ShouldUpdateExistingRecord() {
+        MedicalRecord updatedRecord = new MedicalRecord("John", "Doe", "01/01/2000", List.of("Paracetamol"), List.of("Peanuts"));
+
+        MedicalRecord result = medicalRecordService.updateMedicalRecord("John", "Doe", updatedRecord);
+
+        assertNotNull(result);
+        assertEquals("Paracetamol", result.getMedications().get(0));
+    }
+
+    @Test
+    void updateMedicalRecord_ShouldReturnNull_WhenRecordNotFound() {
+        MedicalRecord result = medicalRecordService.updateMedicalRecord("Unknown", "Person", new MedicalRecord("Unknown", "Person", "01/01/1990", List.of(), List.of()));
+
+        assertNull(result);
+    }
+
+    @Test
+    void deleteMedicalRecord_ShouldRemoveRecord() {
+        boolean result = medicalRecordService.deleteMedicalRecord("John", "Doe");
+
+        assertTrue(result);
+        assertFalse(medicalRecords.stream().anyMatch(mr -> mr.getFirstName().equals("John") && mr.getLastName().equals("Doe")));
+    }
+
+    @Test
+    void deleteMedicalRecord_ShouldReturnFalse_WhenNotFound() {
+        boolean result = medicalRecordService.deleteMedicalRecord("Unknown", "Person");
+
+        assertFalse(result);
+    }
 }

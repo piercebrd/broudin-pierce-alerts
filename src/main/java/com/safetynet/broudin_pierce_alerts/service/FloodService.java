@@ -38,7 +38,7 @@ public class FloodService {
                             List<String> medications = medicalRecordOpt.map(MedicalRecord::getMedications).orElse(Collections.emptyList());
                             List<String> allergies = medicalRecordOpt.map(MedicalRecord::getAllergies).orElse(Collections.emptyList());
 
-                            return new ResidentDTO(person.getFirstName(), person.getLastName(), person.getPhone(), age, allergies, medications);
+                            return new ResidentDTO(person.getFirstName(), person.getLastName(), person.getPhone(), age, medications, allergies);
                         }, Collectors.toList())));
     }
 }
