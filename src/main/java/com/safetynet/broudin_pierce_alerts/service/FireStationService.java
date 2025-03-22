@@ -14,6 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service that manages fire station data and handles operations
+ * related to station-to-address assignments and resident lookups.
+ *
+ * <p>This service supports creation, update, and deletion of fire station mappings,
+ * and provides resident coverage information based on fire station numbers.
+ */
+
 @Service
 public class FireStationService {
 
@@ -22,10 +30,24 @@ public class FireStationService {
     private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
 
+    /**
+     * Constructs a {@code FireStationService} with the required dependencies.
+     *
+     * @param dataRepository        the data repository
+     * @param medicalRecordService  the service used to access medical data
+     */
+
     public FireStationService(DataRepository dataRepository, MedicalRecordService medicalRecordService) {
         this.dataRepository = dataRepository;
         this.medicalRecordService = medicalRecordService;
     }
+
+    /**
+     * Adds a new fire station mapping (address → station number).
+     *
+     * @param fireStation the fire station to add
+     * @return the added fire station
+     */
 
     public FireStation addFireStation(FireStation fireStation) {
         fireStation.setStation(fireStation.getStation().trim());
@@ -34,6 +56,14 @@ public class FireStationService {
         LOGGER.info("Added new fire station: address={}, station={}", fireStation.getAddress(), fireStation.getStation());
         return fireStation;
     }
+
+    /**
+     * Updates the station number assigned to a given address.
+     *
+     * @param address          the address to update
+     * @param newStationNumber the new station number to assign
+     * @return the updated fire station, or {@code null} if not found
+     */
 
     public FireStation updateFireStation(String address, String newStationNumber) {
         final String trimmedAddress = address.trim();
@@ -57,6 +87,13 @@ public class FireStationService {
         return null;
     }
 
+    /**
+     * Deletes a fire station mapping based on address.
+     *
+     * @param address the address to delete the mapping for
+     * @return {@code true} if the station was deleted, {@code false} if not found
+     */
+
     public boolean deleteFireStation(String address) {
         final String normalizedAddress = address.trim().toLowerCase();
 
@@ -74,6 +111,14 @@ public class FireStationService {
 
         return removed;
     }
+
+    /**
+     * Retrieves a list of people covered by the given fire station number,
+     * including counts of adults and children.
+     *
+     * @param stationNumber the station number to look up
+     * @return a {@link FireStationResponseDTO} containing the list of people and demographic counts
+     */
 
     public FireStationResponseDTO getPeopleByStation(String stationNumber) {
         LOGGER.info("Fetching people covered by fire station number: {}", stationNumber);
@@ -95,7 +140,8 @@ public class FireStationService {
         int childCount = 0;
 
         for (Person person : peopleCovered) {
-            Optional<MedicalRecord> medicalRecord = medicalRecordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
+            Optional<MedicalRecord> medicalRecord = medicalRecordService.getMedicalRecordForPerson(
+                    person.getFirstName(), person.getLastName());
             if (medicalRecord.isPresent()) {
                 int age = medicalRecordService.calculateAge(medicalRecord.get().getBirthdate());
                 if (age > 18) {
@@ -106,7 +152,8 @@ public class FireStationService {
             }
         }
 
-        LOGGER.info("Fire station {} covers {} person(s): {} adults, {} children", stationNumber, personDTOList.size(), adultCount, childCount);
+        LOGGER.info("Fire station {} covers {} person(s): {} adults, {} children",
+                stationNumber, personDTOList.size(), adultCount, childCount);
 
         return new FireStationResponseDTO(personDTOList, adultCount, childCount);
     }

@@ -8,6 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller that manages person records.
+ *
+ * <p>This controller provides endpoints to create, update, and delete people
+ * based on their first and last name.
+ *
+ * <p>Base endpoint: <code>/person</code>
+ */
+
 @RestController
 @RequestMapping("/person")
 public class PersonController {
@@ -15,9 +24,23 @@ public class PersonController {
     private final PersonService personService;
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class);
 
+    /**
+     * Constructs a {@code PersonController} with the given service.
+     *
+     * @param personService the service responsible for managing person data
+     */
+
     public PersonController(PersonService personService) {
         this.personService = personService;
     }
+
+    /**
+     * Adds a new person to the system.
+     *
+     * @param person the person to add
+     * @return a {@link ResponseEntity} with the created person and HTTP 201 status,
+     *         or HTTP 400 if the request body is invalid
+     */
 
     @PostMapping
     public ResponseEntity<Person> addPerson(@RequestBody Person person) {
@@ -30,6 +53,16 @@ public class PersonController {
         LOGGER.info("Person created successfully: {} {}", createdPerson.getFirstName(), createdPerson.getLastName());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
     }
+
+    /**
+     * Updates an existing person record.
+     *
+     * @param firstName the person's first name
+     * @param lastName the person's last name
+     * @param updatedPerson the updated person data
+     * @return a {@link ResponseEntity} with the updated person if found,
+     *         or 404 if the person does not exist
+     */
 
     @PutMapping
     public ResponseEntity<?> updatePerson(
@@ -49,6 +82,15 @@ public class PersonController {
         }
     }
 
+    /**
+     * Deletes a person record based on their name.
+     *
+     * @param firstName the person's first name
+     * @param lastName the person's last name
+     * @return a {@link ResponseEntity} confirming deletion,
+     *         or 404 if the person was not found
+     */
+
     @DeleteMapping
     public ResponseEntity<?> deletePerson(
             @RequestParam String firstName,
@@ -66,3 +108,4 @@ public class PersonController {
         }
     }
 }
+

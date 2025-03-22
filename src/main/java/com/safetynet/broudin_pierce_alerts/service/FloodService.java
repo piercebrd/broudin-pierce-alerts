@@ -12,6 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service that provides resident information grouped by address for a list of fire stations.
+ *
+ * <p>This is used by the <code>/flood/stations</code> endpoint to prepare for emergency response
+ * by retrieving residents' details (age, phone, medications, allergies) by location.
+ */
+
 @Service
 public class FloodService {
 
@@ -20,10 +27,25 @@ public class FloodService {
     private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
 
+    /**
+     * Constructs a {@code FloodService} with the required dependencies.
+     *
+     * @param dataRepository        the data repository
+     * @param medicalRecordService  the service used to access medical records
+     */
+
     public FloodService(DataRepository dataRepository, MedicalRecordService medicalRecordService) {
         this.dataRepository = dataRepository;
         this.medicalRecordService = medicalRecordService;
     }
+
+    /**
+     * Retrieves a map of addresses to lists of residents (with medical info)
+     * for all addresses covered by the given fire station numbers.
+     *
+     * @param stationNumbers the list of fire station numbers
+     * @return a map where keys are addresses and values are lists of {@link ResidentDTO}
+     */
 
     public Map<String, List<ResidentDTO>> getFloodInfoByStations(List<String> stationNumbers) {
         LOGGER.info("Fetching flood information for stations: {}", stationNumbers);
@@ -39,7 +61,8 @@ public class FloodService {
                 .filter(person -> coveredAddresses.contains(person.getAddress()))
                 .collect(Collectors.groupingBy(Person::getAddress,
                         Collectors.mapping(person -> {
-                            Optional<MedicalRecord> medicalRecordOpt = medicalRecordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
+                            Optional<MedicalRecord> medicalRecordOpt =
+                                    medicalRecordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
 
                             int age = medicalRecordOpt.map(mr -> medicalRecordService.calculateAge(mr.getBirthdate())).orElse(-1);
                             List<String> medications = medicalRecordOpt.map(MedicalRecord::getMedications).orElse(Collections.emptyList());
@@ -48,7 +71,14 @@ public class FloodService {
                             LOGGER.debug("Resident: {} {}, age={}, phone={}, meds={}, allergies={}",
                                     person.getFirstName(), person.getLastName(), age, person.getPhone(), medications, allergies);
 
-                            return new ResidentDTO(person.getFirstName(), person.getLastName(), person.getPhone(), age, medications, allergies);
+                            return new ResidentDTO(
+                                    person.getFirstName(),
+                                    person.getLastName(),
+                                    person.getPhone(),
+                                    age,
+                                    medications,
+                                    allergies
+                            );
                         }, Collectors.toList())));
 
         LOGGER.info("Flood data built for {} address(es).", result.size());

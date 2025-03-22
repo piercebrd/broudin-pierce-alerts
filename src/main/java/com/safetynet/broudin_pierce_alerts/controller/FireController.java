@@ -9,6 +9,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
+/**
+ * REST controller that provides fire emergency information for a specific address.
+ *
+ * <p>This endpoint returns a list of residents living at the specified address,
+ * along with their medical information and the fire station number that serves them.
+ *
+ * <p>Endpoint: <code>GET /fire?address={address}</code>
+ */
+
 @RestController
 @RequestMapping("/fire")
 public class FireController {
@@ -17,9 +26,26 @@ public class FireController {
 
     private final FireService fireService;
 
+    /**
+     * Constructs a {@code FireController} with the required {@link FireService}.
+     *
+     * @param fireService the service responsible for retrieving fire-related data
+     */
+
     public FireController(FireService fireService) {
         this.fireService = fireService;
     }
+
+    /**
+     * Retrieves fire station number and resident information for the given address.
+     *
+     * @param address the address to retrieve fire response data for
+     * @return a {@link ResponseEntity} containing:
+     * <ul>
+     *   <li>a {@link FireResponseDTO} if residents are found</li>
+     *   <li>an empty list if no residents are present at the address</li>
+     * </ul>
+     */
 
     @GetMapping
     public ResponseEntity<?> getFireInfo(@RequestParam String address) {
@@ -37,3 +63,4 @@ public class FireController {
         }
     }
 }
+

@@ -1,6 +1,14 @@
 package com.safetynet.broudin_pierce_alerts.model;
 
+/**
+ * Model representing a person and their contact/location information.
+ *
+ * <p>This class is used throughout the application for storing and retrieving
+ * basic identity and communication details such as name, address, phone, and email.
+ */
+
 public class Person {
+
     private String firstName;
     private String lastName;
     private String email;
@@ -9,9 +17,26 @@ public class Person {
     private String phone;
     private String address;
 
+    /**
+     * Default no-argument constructor.
+     */
+
     public Person() {}
 
-    public Person(String firstName, String lastName, String email, String city, String zip, String phone, String address) {
+    /**
+     * Constructs a {@code Person} with full identity and contact details.
+     *
+     * @param firstName the person's first name
+     * @param lastName  the person's last name
+     * @param email     the person's email address
+     * @param city      the city the person lives in
+     * @param zip       the ZIP/postal code
+     * @param phone     the person's phone number
+     * @param address   the full address
+     */
+
+    public Person(String firstName, String lastName, String email,
+                  String city, String zip, String phone, String address) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -21,31 +46,128 @@ public class Person {
         this.address = address;
     }
 
+    /**
+     * @return the person's first name
+     */
     public String getFirstName() {
         return firstName;
     }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    /**
+     * Sets the person's first name.
+     *
+     * @param firstName the new first name
+     */
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the person's last name
+     */
 
     public String getLastName() {
         return lastName;
     }
-    public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email;}
+    /**
+     * Sets the person's last name.
+     *
+     * @param lastName the new last name
+     */
 
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-    public String getZip() { return zip; }
-    public void setZip(String zip) { this.zip = zip; }
+    /**
+     * @return the person's email address
+     */
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    /**
+     * Sets the person's email address.
+     *
+     * @param email the new email
+     */
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
+    /**
+     * @return the city where the person lives
+     */
+
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * Sets the city where the person lives.
+     *
+     * @param city the new city
+     */
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * @return the ZIP code
+     */
+
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * Sets the ZIP code.
+     *
+     * @param zip the new ZIP code
+     */
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    /**
+     * @return the person's phone number
+     */
+
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * Sets the person's phone number.
+     *
+     * @param phone the new phone number
+     */
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * @return the full address
+     */
+
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * Sets the full address.
+     *
+     * @param address the new address
+     */
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }
-

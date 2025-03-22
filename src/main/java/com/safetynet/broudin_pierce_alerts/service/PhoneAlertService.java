@@ -11,6 +11,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Service that provides phone numbers of residents based on fire station coverage.
+ *
+ * <p>Used by the <code>/phoneAlert</code> endpoint to notify residents of emergencies
+ * by retrieving their phone numbers via fire station number.
+ */
+
 @Service
 public class PhoneAlertService {
 
@@ -18,9 +25,22 @@ public class PhoneAlertService {
 
     private final DataRepository dataRepository;
 
+    /**
+     * Constructs a {@code PhoneAlertService} with the data repository.
+     *
+     * @param dataRepository the repository containing fire station and person data
+     */
+
     public PhoneAlertService(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }
+
+    /**
+     * Retrieves phone numbers of all people served by the specified fire station.
+     *
+     * @param fireStationNumber the fire station number to look up
+     * @return a set of unique phone numbers of covered residents
+     */
 
     public Set<String> getPhoneNumberByFireStation(String fireStationNumber) {
         LOGGER.info("Fetching phone numbers for fire station number: {}", fireStationNumber);

@@ -10,6 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * REST controller that provides personal and medical information for individuals based on last name.
+ *
+ * <p>This endpoint returns detailed information for each person with the given last name,
+ * including address, age, email, medications, and allergies.
+ *
+ * <p>Endpoint: <code>GET /personInfo?lastName={lastName}</code>
+ */
+
 @RestController
 @RequestMapping("/personInfo")
 public class PersonInfoController {
@@ -18,9 +27,26 @@ public class PersonInfoController {
 
     private final PersonInfoService personInfoService;
 
+    /**
+     * Constructs a {@code PersonInfoController} with the provided service.
+     *
+     * @param personInfoService the service responsible for retrieving person info by last name
+     */
+
     public PersonInfoController(PersonInfoService personInfoService) {
         this.personInfoService = personInfoService;
     }
+
+    /**
+     * Retrieves personal and medical information for all individuals with the specified last name.
+     *
+     * @param lastName the last name to filter by
+     * @return a {@link ResponseEntity} containing:
+     * <ul>
+     *   <li>a list of {@link PersonInfoDTO} if matches are found</li>
+     *   <li>an empty list if no person matches the last name</li>
+     * </ul>
+     */
 
     @GetMapping
     public ResponseEntity<List<PersonInfoDTO>> getPersonInfo(@RequestParam String lastName) {
@@ -37,3 +63,4 @@ public class PersonInfoController {
         }
     }
 }
+

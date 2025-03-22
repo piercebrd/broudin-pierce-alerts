@@ -13,6 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service responsible for retrieving information about children living at a given address.
+ *
+ * <p>Used by the <code>/childAlert</code> endpoint to return a list of children (age ≤ 18)
+ * and their household members, if any.
+ */
+
 @Service
 public class ChildAlertService {
 
@@ -21,10 +28,25 @@ public class ChildAlertService {
     private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
 
+    /**
+     * Constructs a {@code ChildAlertService} with the necessary dependencies.
+     *
+     * @param dataRepository        the in-memory data repository
+     * @param medicalRecordService  the service used to retrieve medical records and calculate age
+     */
+
     public ChildAlertService(DataRepository dataRepository, MedicalRecordService medicalRecordService) {
         this.dataRepository = dataRepository;
         this.medicalRecordService = medicalRecordService;
     }
+
+    /**
+     * Retrieves children living at the specified address along with their household members.
+     *
+     * @param address the address to search for children
+     * @return a list of {@link ChildAlertResponseDTO} containing children and their household members,
+     *         or an empty list if no children are found
+     */
 
     public List<ChildAlertResponseDTO> getChildrenAddress(String address) {
         LOGGER.info("Looking for children at address: {}", address);
@@ -52,7 +74,12 @@ public class ChildAlertService {
                                     .map(person -> new PersonDTO(person.getFirstName(), person.getLastName()))
                                     .collect(Collectors.toList());
 
-                            children.add(new ChildAlertResponseDTO(resident.getFirstName(), resident.getLastName(), age, householdMembers));
+                            children.add(new ChildAlertResponseDTO(
+                                    resident.getFirstName(),
+                                    resident.getLastName(),
+                                    age,
+                                    householdMembers
+                            ));
                         }
                     });
         }

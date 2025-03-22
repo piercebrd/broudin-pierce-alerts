@@ -13,6 +13,13 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service responsible for managing medical records and calculating age based on birthdate.
+ *
+ * <p>This service provides functionality to add, update, delete, and retrieve medical records,
+ * and to compute a person's age for use in other services such as emergency and risk evaluations.
+ */
+
 @Service
 public class MedicalRecordService {
 
@@ -20,9 +27,23 @@ public class MedicalRecordService {
 
     private final DataRepository dataRepository;
 
+    /**
+     * Constructs a {@code MedicalRecordService} with the provided data repository.
+     *
+     * @param dataRepository the in-memory data repository
+     */
+
     public MedicalRecordService(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }
+
+    /**
+     * Retrieves a medical record for the person matching the given name.
+     *
+     * @param firstName the person's first name
+     * @param lastName  the person's last name
+     * @return an {@link Optional} containing the medical record if found, or empty if not found
+     */
 
     public Optional<MedicalRecord> getMedicalRecordForPerson(String firstName, String lastName) {
         LOGGER.info("Looking up medical record for: {} {}", firstName, lastName);
@@ -43,6 +64,13 @@ public class MedicalRecordService {
         return result;
     }
 
+    /**
+     * Calculates a person's age based on their birthdate string.
+     *
+     * @param birthdate the birthdate string in <code>MM/dd/yyyy</code> format
+     * @return the calculated age in years, or 18 if the date is invalid
+     */
+
     public int calculateAge(String birthdate) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -56,12 +84,28 @@ public class MedicalRecordService {
         }
     }
 
+    /**
+     * Adds a new medical record to the data repository.
+     *
+     * @param medicalRecord the medical record to add
+     * @return the added medical record
+     */
+
     public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
         dataRepository.getMedicalRecords().add(medicalRecord);
         dataRepository.saveData();
         LOGGER.info("Added new medical record for: {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
         return medicalRecord;
     }
+
+    /**
+     * Updates an existing medical record for the specified person.
+     *
+     * @param firstName     the person's first name
+     * @param lastName      the person's last name
+     * @param updatedRecord the updated medical record to replace the existing one
+     * @return the updated medical record, or {@code null} if not found
+     */
 
     public MedicalRecord updateMedicalRecord(String firstName, String lastName, MedicalRecord updatedRecord) {
         LOGGER.info("Updating medical record for: {} {}", firstName, lastName);
@@ -86,6 +130,14 @@ public class MedicalRecordService {
         LOGGER.warn("Update failed - no record found for: {} {}", firstName, lastName);
         return null;
     }
+
+    /**
+     * Deletes a medical record for the specified person.
+     *
+     * @param firstName the person's first name
+     * @param lastName  the person's last name
+     * @return {@code true} if the record was deleted, {@code false} if not found
+     */
 
     public boolean deleteMedicalRecord(String firstName, String lastName) {
         final String trimmedFirstName = firstName.trim();
