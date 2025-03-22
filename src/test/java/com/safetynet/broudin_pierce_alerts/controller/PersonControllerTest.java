@@ -17,8 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -66,6 +65,29 @@ public class PersonControllerTest {
                         .param("firstName", "John")
                         .param("lastName", "Doe"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void updatePerson_ShouldReturnUpdatedPerson() throws Exception {
+
+        Person updatedPerson = new Person("John", "Doe", "updated@example.com", "NewCity", "67890", "555-9999", "456 New Street");
+
+
+        Mockito.when(personService.updatePerson(Mockito.eq("John"), Mockito.eq("Doe"), Mockito.any(Person.class)))
+                .thenReturn(updatedPerson);
+
+
+        mockMvc.perform(put("/person")
+                        .param("firstName", "John")
+                        .param("lastName", "Doe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedPerson)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("updated@example.com"))
+                .andExpect(jsonPath("$.address").value("456 New Street"))
+                .andExpect(jsonPath("$.phone").value("555-9999"));
     }
 
 

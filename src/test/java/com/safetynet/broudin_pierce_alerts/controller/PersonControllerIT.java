@@ -11,11 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 
 @SpringBootTest
@@ -78,5 +76,36 @@ public class PersonControllerIT {
 
         response.andExpect(status().isOk());
     }
+
+    @Test
+    void updatePerson_ShouldReturnUpdatedPerson() throws Exception {
+
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testPerson)))
+                .andExpect(status().isCreated());
+
+
+        Person updatedPerson = new Person("John", "Doe", "updated@doe.com", "NewCity", "67890", "555-9999", "456 New Street");
+        String updatedPersonJson = objectMapper.writeValueAsString(updatedPerson);
+
+
+        ResultActions response = mockMvc.perform(
+                put("/person")
+                        .param("firstName", "John")
+                        .param("lastName", "Doe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatedPersonJson)
+        );
+
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("updated@doe.com"))
+                .andExpect(jsonPath("$.address").value("456 New Street"))
+                .andExpect(jsonPath("$.phone").value("555-9999"));
+    }
+
 
 }

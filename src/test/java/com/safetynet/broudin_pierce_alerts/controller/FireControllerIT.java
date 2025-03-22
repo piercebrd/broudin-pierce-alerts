@@ -33,7 +33,7 @@ public class FireControllerIT {
         mockMvc.perform(get("/fire")
                         .param("address", "NonExistent Address"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("[]")); // Empty response
+                .andExpect(content().string("[]"));
     }
 }
 

@@ -86,6 +86,6 @@ class ChildAlertServiceTest {
         List<ChildAlertResponseDTO> result = childAlertService.getChildrenAddress("456 Oak St");
 
         assertNotNull(result);
-        assertTrue(result.isEmpty()); 
+        assertTrue(result.isEmpty());
     }
 }
