@@ -6,6 +6,8 @@ import com.safetynet.broudin_pierce_alerts.model.FireStation;
 import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
 import com.safetynet.broudin_pierce_alerts.model.Person;
 import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class FireStationService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FireStationService.class);
 
     private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
@@ -27,12 +31,15 @@ public class FireStationService {
         fireStation.setStation(fireStation.getStation().trim());
         dataRepository.getFireStations().add(fireStation);
         dataRepository.saveData();
+        LOGGER.info("Added new fire station: address={}, station={}", fireStation.getAddress(), fireStation.getStation());
         return fireStation;
     }
 
     public FireStation updateFireStation(String address, String newStationNumber) {
         final String trimmedAddress = address.trim();
-        final String trimmedStation = newStationNumber.trim(); // Trim \n
+        final String trimmedStation = newStationNumber.trim();
+
+        LOGGER.info("Attempting to update fire station at address={} to new station={}", trimmedAddress, trimmedStation);
 
         Optional<FireStation> fireStationOpt = dataRepository.getFireStations().stream()
                 .filter(fs -> fs.getAddress().equalsIgnoreCase(trimmedAddress))
@@ -40,31 +47,40 @@ public class FireStationService {
 
         if (fireStationOpt.isPresent()) {
             FireStation fireStation = fireStationOpt.get();
-            fireStation.setStation(trimmedStation); // Save without \n
+            fireStation.setStation(trimmedStation);
             dataRepository.saveData();
+            LOGGER.info("Successfully updated station at address={} to station={}", trimmedAddress, trimmedStation);
             return fireStation;
         }
 
+        LOGGER.warn("No fire station found at address={} to update", trimmedAddress);
         return null;
     }
 
-
     public boolean deleteFireStation(String address) {
         final String normalizedAddress = address.trim().toLowerCase();
+
+        LOGGER.info("Attempting to delete fire station at address={}", normalizedAddress);
 
         boolean removed = dataRepository.getFireStations().removeIf(fs ->
                 fs.getAddress().trim().toLowerCase().equals(normalizedAddress));
 
         if (removed) {
             dataRepository.saveData();
+            LOGGER.info("Successfully deleted fire station at address={}", normalizedAddress);
+        } else {
+            LOGGER.warn("No fire station found at address={} to delete", normalizedAddress);
         }
+
         return removed;
     }
 
     public FireStationResponseDTO getPeopleByStation(String stationNumber) {
+        LOGGER.info("Fetching people covered by fire station number: {}", stationNumber);
+
         List<String> coveredAddresses = dataRepository.getFireStations().stream()
                 .filter(fs -> fs.getStation().equals(stationNumber))
-                .map(fs -> fs.getAddress())
+                .map(FireStation::getAddress)
                 .collect(Collectors.toList());
 
         List<Person> peopleCovered = dataRepository.getPeople().stream()
@@ -80,7 +96,6 @@ public class FireStationService {
 
         for (Person person : peopleCovered) {
             Optional<MedicalRecord> medicalRecord = medicalRecordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
-
             if (medicalRecord.isPresent()) {
                 int age = medicalRecordService.calculateAge(medicalRecord.get().getBirthdate());
                 if (age > 18) {
@@ -90,6 +105,9 @@ public class FireStationService {
                 }
             }
         }
+
+        LOGGER.info("Fire station {} covers {} person(s): {} adults, {} children", stationNumber, personDTOList.size(), adultCount, childCount);
+
         return new FireStationResponseDTO(personDTOList, adultCount, childCount);
     }
 }

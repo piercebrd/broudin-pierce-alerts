@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class PersonController {
 
     private final PersonService personService;
-    private static final Logger logger = LoggerFactory.getLogger(FireStationController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class);
 
     public PersonController(PersonService personService) {
         this.personService = personService;
@@ -21,11 +21,13 @@ public class PersonController {
 
     @PostMapping
     public ResponseEntity<Person> addPerson(@RequestBody Person person) {
-        if(person == null) {
-            logger.error("Request body is missing or invalid.");
+        if (person == null) {
+            LOGGER.error("POST /person - Request body is missing or invalid.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        LOGGER.info("POST /person - Adding person: {} {}", person.getFirstName(), person.getLastName());
         Person createdPerson = personService.addPerson(person);
+        LOGGER.info("Person created successfully: {} {}", createdPerson.getFirstName(), createdPerson.getLastName());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
     }
 
@@ -35,8 +37,16 @@ public class PersonController {
             @RequestParam String lastName,
             @RequestBody Person updatedPerson) {
 
+        LOGGER.info("PUT /person - Updating person: {} {}", firstName, lastName);
         Person result = personService.updatePerson(firstName, lastName, updatedPerson);
-        return result != null ? ResponseEntity.ok(result) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found.");
+
+        if (result != null) {
+            LOGGER.info("Person updated successfully: {} {}", firstName, lastName);
+            return ResponseEntity.ok(result);
+        } else {
+            LOGGER.warn("Update failed - Person not found: {} {}", firstName, lastName);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found.");
+        }
     }
 
     @DeleteMapping
@@ -44,7 +54,15 @@ public class PersonController {
             @RequestParam String firstName,
             @RequestParam String lastName) {
 
+        LOGGER.info("DELETE /person - Attempting to delete: {} {}", firstName, lastName);
         boolean deleted = personService.deletePerson(firstName, lastName);
-        return deleted ? ResponseEntity.ok("Person deleted successfully.") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found.");
+
+        if (deleted) {
+            LOGGER.info("Person deleted successfully: {} {}", firstName, lastName);
+            return ResponseEntity.ok("Person deleted successfully.");
+        } else {
+            LOGGER.warn("Delete failed - Person not found: {} {}", firstName, lastName);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found.");
+        }
     }
 }

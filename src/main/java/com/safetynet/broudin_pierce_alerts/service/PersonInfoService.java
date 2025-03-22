@@ -3,6 +3,8 @@ package com.safetynet.broudin_pierce_alerts.service;
 import com.safetynet.broudin_pierce_alerts.dto.PersonInfoDTO;
 import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
 import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 @Service
 public class PersonInfoService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonInfoService.class);
+
     private final DataRepository dataRepository;
     private final MedicalRecordService medicalRecordService;
 
@@ -22,10 +26,11 @@ public class PersonInfoService {
     }
 
     public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
-        return dataRepository.getPeople().stream()
+        LOGGER.info("Fetching person info for lastName: {}", lastName);
+
+        List<PersonInfoDTO> personInfoList = dataRepository.getPeople().stream()
                 .filter(person -> person.getLastName().equalsIgnoreCase(lastName))
                 .map(person -> {
-
                     Optional<MedicalRecord> medicalRecordOpt = medicalRecordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
 
                     int age = medicalRecordOpt.map(mr -> medicalRecordService.calculateAge(mr.getBirthdate())).orElse(-1);
@@ -35,5 +40,13 @@ public class PersonInfoService {
                     return new PersonInfoDTO(person.getFirstName(), person.getLastName(), person.getAddress(), age, person.getEmail(), medications, allergies);
                 })
                 .collect(Collectors.toList());
+
+        if (personInfoList.isEmpty()) {
+            LOGGER.warn("No person info found for lastName: {}", lastName);
+        } else {
+            LOGGER.info("Found {} person(s) for lastName: {}", personInfoList.size(), lastName);
+        }
+
+        return personInfoList;
     }
 }

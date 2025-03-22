@@ -12,46 +12,46 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/medicalRecord")
 public class MedicalRecordController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MedicalRecordController.class);
     private final MedicalRecordService medicalRecordService;
 
     public MedicalRecordController(MedicalRecordService medicalRecordService) {
         this.medicalRecordService = medicalRecordService;
     }
 
-
     @PostMapping
     public ResponseEntity<MedicalRecord> addMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        logger.info("Adding new medical record for: {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
+        LOGGER.info("POST /medicalRecord - Adding medical record for: {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
         MedicalRecord created = medicalRecordService.addMedicalRecord(medicalRecord);
+        LOGGER.info("Medical record added successfully for: {} {}", created.getFirstName(), created.getLastName());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-
 
     @PutMapping
     public ResponseEntity<?> updateMedicalRecord(@RequestParam String firstName,
                                                  @RequestParam String lastName,
                                                  @RequestBody MedicalRecord updatedRecord) {
+        LOGGER.info("PUT /medicalRecord - Attempting to update record for: {} {}", firstName, lastName);
         MedicalRecord result = medicalRecordService.updateMedicalRecord(firstName, lastName, updatedRecord);
         if (result != null) {
-            logger.info("Updated medical record for: {} {}", firstName, lastName);
+            LOGGER.info("Medical record updated successfully for: {} {}", firstName, lastName);
             return ResponseEntity.ok(result);
         } else {
-            logger.warn("Medical record not found for: {} {}", firstName, lastName);
+            LOGGER.warn("Medical record not found for update: {} {}", firstName, lastName);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Medical record not found.");
         }
     }
 
-
     @DeleteMapping
     public ResponseEntity<?> deleteMedicalRecord(@RequestParam String firstName,
                                                  @RequestParam String lastName) {
+        LOGGER.info("DELETE /medicalRecord - Attempting to delete record for: {} {}", firstName, lastName);
         boolean deleted = medicalRecordService.deleteMedicalRecord(firstName, lastName);
         if (deleted) {
-            logger.info("Deleted medical record for: {} {}", firstName, lastName);
+            LOGGER.info("Medical record deleted successfully for: {} {}", firstName, lastName);
             return ResponseEntity.ok("Medical record deleted successfully.");
         } else {
-            logger.warn("Medical record not found for: {} {}", firstName, lastName);
+            LOGGER.warn("Medical record not found for deletion: {} {}", firstName, lastName);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Medical record not found.");
         }
     }

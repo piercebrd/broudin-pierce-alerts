@@ -5,6 +5,8 @@ import com.safetynet.broudin_pierce_alerts.dto.ResidentDTO;
 import com.safetynet.broudin_pierce_alerts.model.FireStation;
 import com.safetynet.broudin_pierce_alerts.model.MedicalRecord;
 import com.safetynet.broudin_pierce_alerts.repository.DataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -15,24 +17,32 @@ import java.util.stream.Collectors;
 @Service
 public class FireService {
 
-    private final DataRepository dataservice;
-    private final MedicalRecordService recordService;
-    private final DataRepository dataRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(FireService.class);
 
-    public FireService(DataRepository dataservice, MedicalRecordService recordService, DataRepository dataRepository) {
-        this.dataservice = dataservice;
-        this.recordService = recordService;
+    private final DataRepository dataRepository;
+    private final MedicalRecordService recordService;
+
+    public FireService(DataRepository dataRepository, MedicalRecordService recordService) {
         this.dataRepository = dataRepository;
+        this.recordService = recordService;
     }
 
     public FireResponseDTO getInfoByAddress(String address) {
-        String fireStationNumber = dataservice.getFireStations().stream()
+        LOGGER.info("Fetching fire alert info for address: {}", address);
+
+        String fireStationNumber = dataRepository.getFireStations().stream()
                 .filter(fs -> fs.getAddress().equals(address))
                 .map(FireStation::getStation)
                 .findFirst()
                 .orElse(null);
 
-        List<ResidentDTO> residents = dataservice.getPeople().stream()
+        if (fireStationNumber == null) {
+            LOGGER.warn("No fire station assigned to address: {}", address);
+        } else {
+            LOGGER.info("Address {} is covered by fire station: {}", address, fireStationNumber);
+        }
+
+        List<ResidentDTO> residents = dataRepository.getPeople().stream()
                 .filter(person -> person.getAddress().equals(address))
                 .map(person -> {
                     Optional<MedicalRecord> medicalRecordOpt = recordService.getMedicalRecordForPerson(person.getFirstName(), person.getLastName());
@@ -41,11 +51,15 @@ public class FireService {
                     List<String> medications = medicalRecordOpt.map(MedicalRecord::getMedications).orElse(Collections.emptyList());
                     List<String> allergies = medicalRecordOpt.map(MedicalRecord::getAllergies).orElse(Collections.emptyList());
 
+                    LOGGER.debug("Resident: {} {}, age {}, meds={}, allergies={}",
+                            person.getFirstName(), person.getLastName(), age, medications, allergies);
+
                     return new ResidentDTO(person.getFirstName(), person.getLastName(), person.getPhone(), age, medications, allergies);
                 })
                 .collect(Collectors.toList());
 
-        return new FireResponseDTO(fireStationNumber, residents);
+        LOGGER.info("Found {} resident(s) at address: {}", residents.size(), address);
 
+        return new FireResponseDTO(fireStationNumber, residents);
     }
 }
