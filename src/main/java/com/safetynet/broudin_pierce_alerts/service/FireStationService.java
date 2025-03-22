@@ -42,11 +42,9 @@ public class FireStationService {
             FireStation fireStation = fireStationOpt.get();
             fireStation.setStation(trimmedStation); // Save without \n
             dataRepository.saveData();
-            System.out.println("Updated fire station: " + trimmedAddress + " -> " + trimmedStation);
             return fireStation;
         }
 
-        System.out.println("Address not found: " + trimmedAddress);
         return null;
     }
 
@@ -59,11 +57,7 @@ public class FireStationService {
 
         if (removed) {
             dataRepository.saveData();
-            System.out.println("Fire station mapping deleted successfully.");
-        } else {
-            System.out.println("Address not found! Possible mismatch in data.");
         }
-
         return removed;
     }
 

@@ -61,12 +61,9 @@ public class MedicalRecordService {
                 updatedRecord.setLastName(trimmedLastName);
                 dataRepository.getMedicalRecords().set(i, updatedRecord);
                 dataRepository.saveData();
-                System.out.println("Updated medical record for: " + trimmedFirstName + " " + trimmedLastName);
                 return updatedRecord;
             }
         }
-
-        System.out.println("Medical record not found: " + trimmedFirstName + " " + trimmedLastName);
         return null;
     }
 
@@ -80,11 +77,7 @@ public class MedicalRecordService {
 
         if (removed) {
             dataRepository.saveData();
-            System.out.println("Deleted medical record for: " + trimmedFirstName + " " + trimmedLastName);
-        } else {
-            System.out.println("Medical record not found: " + trimmedFirstName + " " + trimmedLastName);
         }
-
         return removed;
     }
 }

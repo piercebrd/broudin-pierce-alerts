@@ -1,7 +1,6 @@
 package com.safetynet.broudin_pierce_alerts.controller;
 
 import com.safetynet.broudin_pierce_alerts.dto.FireStationResponseDTO;
-import com.safetynet.broudin_pierce_alerts.dto.PersonDTO;
 import com.safetynet.broudin_pierce_alerts.model.FireStation;
 import com.safetynet.broudin_pierce_alerts.service.FireStationService;
 import org.slf4j.Logger;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @RestController

@@ -35,13 +35,10 @@ public class PersonService {
                 updatedPerson.setLastName(trimmedLastName);
                 people.set(i, updatedPerson);
                 dataRepository.saveData();
-
-                System.out.println("Person updated successfully: " + updatedPerson);
                 return updatedPerson;
             }
         }
 
-        System.out.println("Person not found: " + trimmedFirstName + " " + trimmedLastName);
         return null;
     }
 
@@ -56,9 +53,6 @@ public class PersonService {
                         person.getLastName().trim().equalsIgnoreCase(trimmedLastName))
                 .count();
 
-        System.out.println("Before deletion, found " + beforeCount + " matching persons.");
-
-
         boolean removed = dataRepository.getPeople().removeIf(person ->
                 person.getFirstName().trim().equalsIgnoreCase(trimmedFirstName) &&
                         person.getLastName().trim().equalsIgnoreCase(trimmedLastName));
@@ -69,15 +63,9 @@ public class PersonService {
                         person.getLastName().trim().equalsIgnoreCase(trimmedLastName))
                 .count();
 
-        System.out.println("After deletion, remaining persons: " + afterCount);
-
         if (removed) {
             dataRepository.saveData();
-            System.out.println("Person(s) deleted successfully!");
-        } else {
-            System.out.println("No persons deleted, possibly an issue.");
         }
-
         return removed;
     }
 }

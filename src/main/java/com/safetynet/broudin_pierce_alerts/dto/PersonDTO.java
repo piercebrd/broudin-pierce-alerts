@@ -14,7 +14,6 @@ public class PersonDTO {
         this.phone = phone;
     }
 
-    // Constructor for ChildAlertService
     public PersonDTO(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;

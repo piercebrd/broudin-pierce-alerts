@@ -19,7 +19,7 @@ public class MedicalRecordController {
         this.medicalRecordService = medicalRecordService;
     }
 
-    // POST: Add a new medical record
+
     @PostMapping
     public ResponseEntity<MedicalRecord> addMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
         logger.info("Adding new medical record for: {} {}", medicalRecord.getFirstName(), medicalRecord.getLastName());
@@ -27,7 +27,7 @@ public class MedicalRecordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // PUT: Update an existing medical record (firstName and lastName are identifiers)
+
     @PutMapping
     public ResponseEntity<?> updateMedicalRecord(@RequestParam String firstName,
                                                  @RequestParam String lastName,
@@ -42,7 +42,7 @@ public class MedicalRecordController {
         }
     }
 
-    // DELETE: Delete a medical record using firstName and lastName as unique identifiers
+
     @DeleteMapping
     public ResponseEntity<?> deleteMedicalRecord(@RequestParam String firstName,
                                                  @RequestParam String lastName) {
